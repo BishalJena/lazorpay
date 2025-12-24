@@ -44,6 +44,24 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) — you're live on Solana Devnet!
 
+### 🔐 HTTPS Setup (Required for Transaction Signing)
+
+WebAuthn requires HTTPS for passkey signing. For local development:
+
+```bash
+# Install mkcert (one-time setup)
+brew install mkcert
+mkcert -install
+
+# Generate local certificates
+mkdir -p certs && cd certs && mkcert localhost 127.0.0.1 ::1
+
+# Run with HTTPS
+npm run dev:https
+```
+
+Open [https://localhost:3000](https://localhost:3000) — transactions will now work!
+
 ---
 
 ## 📦 Tech Stack
