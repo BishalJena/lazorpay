@@ -48,10 +48,23 @@ export function UsdcTransferExample() {
             await signAndSendTransaction({ instructions: [createAtaIx, transferIx] });
             setStatus("success");
             setTimeout(() => setStatus("idle"), 2000);
-        } catch (err) {
-            console.error(err);
+        } catch (err: unknown) {
+            // Parse common error messages for user-friendly display
+            const errMsg = err instanceof Error ? err.message : "Transfer failed";
+            let displayMsg = "Transfer failed";
+
+            if (errMsg.includes("insufficient funds") || errMsg.includes("0x1")) {
+                displayMsg = "Insufficient USDC balance";
+            } else if (errMsg.includes("invalid account")) {
+                displayMsg = "No USDC in wallet";
+            } else if (errMsg.includes("User rejected") || errMsg.includes("cancelled")) {
+                displayMsg = "Cancelled";
+            } else {
+                displayMsg = errMsg.slice(0, 30);
+            }
+
             setStatus("error");
-            setErrorMsg(err instanceof Error ? err.message.slice(0, 40) : "Transfer failed");
+            setErrorMsg(displayMsg);
             setTimeout(() => {
                 setStatus("idle");
                 setErrorMsg(null);
