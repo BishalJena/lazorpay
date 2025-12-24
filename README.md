@@ -2,7 +2,6 @@
 
 > A developer-friendly starter template for building Solana apps with **passkey authentication** and **gasless transactions** using [LazorKit](https://lazorkit.com).
 
-![Demo Screenshot](public/demo.gif)
 
 ## ✨ What You'll Learn
 
