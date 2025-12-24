@@ -4,17 +4,8 @@
  * ===========================================
  * LAZORPAY - MAIN DEMO PAGE
  * ===========================================
- *
- * This is the main demonstration page that combines all three examples:
- * 1. Passkey Authentication - Create/connect wallet with biometrics
- * 2. Gasless Transactions - Send SOL without paying gas fees
- * 3. Session Persistence - Stay logged in across sessions
- *
- * PURPOSE:
- * This starter template shows developers how to integrate LazorKit SDK
- * for passkey-based Solana wallets with gasless transactions.
- *
- * @see https://docs.lazorkit.com/
+ * 
+ * Professional, minimalist UI demonstrating LazorKit SDK integration.
  */
 
 import { PasskeyAuthExample } from "@/examples/passkey-auth";
@@ -26,118 +17,93 @@ export default function Home() {
   const { isConnected, smartWalletPubkey } = useWallet();
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <main className="min-h-screen bg-neutral-950 text-white">
       {/* Header */}
-      <header className="border-b border-white/10 bg-black/20 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">🔐</span>
-            <h1 className="text-xl font-bold text-white">LazorPay</h1>
+      <header className="sticky top-0 z-50 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur-xl">
+        <div className="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-sm font-bold">
+              L
+            </div>
+            <span className="text-lg font-semibold tracking-tight">LazorPay</span>
           </div>
+
           {isConnected && smartWalletPubkey && (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/20 border border-green-500/30 rounded-full">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-xs text-green-300 font-mono">
-                {smartWalletPubkey.toBase58().slice(0, 4)}...
-                {smartWalletPubkey.toBase58().slice(-4)}
-              </span>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+              <code className="text-xs text-emerald-400 font-mono">
+                {smartWalletPubkey.toBase58().slice(0, 6)}...{smartWalletPubkey.toBase58().slice(-4)}
+              </code>
             </div>
           )}
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 py-12 text-center">
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-          Passkey Wallet Starter
-        </h2>
-        <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-6">
-          A developer-friendly template for building Solana apps with
-          <span className="text-purple-400 font-semibold"> biometric authentication</span> and
-          <span className="text-green-400 font-semibold"> gasless transactions</span>.
-        </p>
-        <div className="flex flex-wrap justify-center gap-3 text-sm">
-          <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-gray-300">
-            ✅ No seed phrases
-          </span>
-          <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-gray-300">
-            ✅ No wallet extension
-          </span>
-          <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-gray-300">
-            ✅ No gas fees
-          </span>
-        </div>
-      </section>
-
-      {/* Examples Grid */}
-      <section className="max-w-6xl mx-auto px-4 pb-16">
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Example 1: Passkey Auth */}
-          <div className="transform hover:scale-[1.02] transition-transform">
-            <PasskeyAuthExample />
-          </div>
-
-          {/* Example 2: Gasless Send */}
-          <div className="transform hover:scale-[1.02] transition-transform">
-            <GaslessSendExample />
-          </div>
-
-          {/* Example 3: Session Persist */}
-          <div className="transform hover:scale-[1.02] transition-transform">
-            <SessionPersistExample />
+      {/* Hero */}
+      <section className="mx-auto max-w-5xl px-6 pt-16 pb-12 md:pt-24 md:pb-16">
+        <div className="max-w-2xl">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+            Passkey Wallet
+            <br />
+            <span className="text-neutral-500">Starter Template</span>
+          </h1>
+          <p className="mt-4 text-base md:text-lg text-neutral-400 leading-relaxed">
+            Build Solana apps with biometric authentication and gasless transactions.
+            No seed phrases. No wallet extensions. No gas fees.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {["Passkey Auth", "Gasless TX", "Session Persist"].map((tag) => (
+              <span
+                key={tag}
+                className="px-3 py-1 text-xs font-medium bg-neutral-900 border border-neutral-800 rounded-full text-neutral-400"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Developer Resources */}
-      <section className="max-w-6xl mx-auto px-4 pb-16">
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
-          <h3 className="text-xl font-bold text-white mb-4">📚 Developer Resources</h3>
-          <div className="grid md:grid-cols-3 gap-4">
-            <a
-              href="https://docs.lazorkit.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors"
-            >
-              <h4 className="font-semibold text-white mb-1">📖 Documentation</h4>
-              <p className="text-sm text-gray-400">Official LazorKit SDK docs</p>
-            </a>
-            <a
-              href="https://github.com/lazor-kit/lazor-kit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors"
-            >
-              <h4 className="font-semibold text-white mb-1">💻 GitHub</h4>
-              <p className="text-sm text-gray-400">View source code</p>
-            </a>
-            <a
-              href="https://t.me/lazorkit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors"
-            >
-              <h4 className="font-semibold text-white mb-1">💬 Telegram</h4>
-              <p className="text-sm text-gray-400">Join the community</p>
-            </a>
+      {/* Examples */}
+      <section className="mx-auto max-w-5xl px-6 pb-16">
+        <div className="grid gap-4 md:grid-cols-3">
+          <PasskeyAuthExample />
+          <GaslessSendExample />
+          <SessionPersistExample />
+        </div>
+      </section>
+
+      {/* Resources */}
+      <section className="mx-auto max-w-5xl px-6 pb-16">
+        <div className="p-6 bg-neutral-900/50 border border-neutral-800 rounded-2xl">
+          <h2 className="text-sm font-semibold text-neutral-300 mb-4">Resources</h2>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {[
+              { label: "Documentation", href: "https://docs.lazorkit.com", icon: "📖" },
+              { label: "GitHub", href: "https://github.com/lazor-kit/lazor-kit", icon: "💻" },
+              { label: "Telegram", href: "https://t.me/lazorkit", icon: "💬" },
+            ].map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-3 bg-neutral-800/50 hover:bg-neutral-800 border border-neutral-700/50 rounded-xl transition-colors"
+              >
+                <span className="text-lg">{link.icon}</span>
+                <span className="text-sm font-medium text-neutral-300">{link.label}</span>
+              </a>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-black/20">
-        <div className="max-w-6xl mx-auto px-4 py-6 text-center">
-          <p className="text-sm text-gray-500">
-            Built for{" "}
-            <span className="text-purple-400">Superteam Vietnam Hackathon</span>
-            {" "}• Powered by{" "}
-            <a
-              href="https://lazorkit.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:underline"
-            >
+      <footer className="border-t border-neutral-800">
+        <div className="mx-auto max-w-5xl px-6 py-6 text-center">
+          <p className="text-xs text-neutral-500">
+            Built for Superteam Vietnam Hackathon · Powered by{" "}
+            <a href="https://lazorkit.com" className="text-neutral-400 hover:text-white transition-colors">
               LazorKit
             </a>
           </p>

@@ -1,232 +1,111 @@
 "use client";
 
 /**
- * ===========================================
  * EXAMPLE 3: SESSION PERSISTENCE
- * ===========================================
- *
- * This example demonstrates how to:
- * 1. Persist wallet sessions across browser refreshes
- * 2. Auto-reconnect returning users
- * 3. Manage session state and expiry
- *
- * KEY CONCEPTS:
- * - Session: A temporary authentication state stored locally
- * - Auto-reconnect: Checks for existing session on page load
- * - Session expiry: Sessions have a limited lifetime for security
- *
- * @see https://docs.lazorkit.com/react-sdk/use-wallet
+ * Clean, minimal component for managing wallet sessions.
  */
 
 import { useWallet } from "@lazorkit/wallet";
 import { useEffect, useState } from "react";
 
-/**
- * SessionPersistExample Component
- *
- * Demonstrates session management for a seamless user experience.
- * Users stay logged in across browser sessions without re-authenticating.
- */
 export function SessionPersistExample() {
-    // ============================================
-    // STEP 1: Get wallet and session state
-    // ============================================
-    const {
-        isConnected,
-        isConnecting,
-        wallet,
-        connect,
-        disconnect,
-    } = useWallet();
+    const { isConnected, isConnecting, wallet, connect, disconnect } = useWallet();
+    const [hasSession, setHasSession] = useState(false);
 
-    const [sessionInfo, setSessionInfo] = useState<{
-        hasStoredSession: boolean;
-        sessionAge: string | null;
-    }>({
-        hasStoredSession: false,
-        sessionAge: null,
-    });
-
-    // ============================================
-    // STEP 2: Check for existing session on mount
-    // ============================================
-    /**
-     * Auto-reconnect Logic
-     *
-     * HOW IT WORKS:
-     * 1. On component mount, check localStorage for saved session
-     * 2. LazorKit automatically handles session restoration
-     * 3. If session exists and is valid, user is auto-connected
-     *
-     * SESSION STORAGE:
-     * LazorKit stores session data in localStorage under specific keys.
-     * This includes the credential ID and session tokens.
-     */
     useEffect(() => {
-        checkStoredSession();
-    }, []);
+        checkSession();
+    }, [isConnected]);
 
-    /**
-     * Checks if there's a stored session in localStorage
-     */
-    const checkStoredSession = () => {
-        try {
-            // LazorKit stores session data - we check if it exists
-            // The actual keys may vary - this is for demonstration
-            const hasSession = localStorage.getItem("lazorkit-session") !== null ||
-                localStorage.getItem("lazorkit-wallet") !== null;
-
-            // Calculate session age if stored timestamp exists
-            const storedTimestamp = localStorage.getItem("lazorkit-session-time");
-            let sessionAge = null;
-
-            if (storedTimestamp) {
-                const ageMs = Date.now() - parseInt(storedTimestamp);
-                const ageMinutes = Math.floor(ageMs / 60000);
-                sessionAge = ageMinutes < 60
-                    ? `${ageMinutes} minutes ago`
-                    : `${Math.floor(ageMinutes / 60)} hours ago`;
-            }
-
-            setSessionInfo({
-                hasStoredSession: hasSession,
-                sessionAge,
-            });
-        } catch {
-            // localStorage might not be available
-            setSessionInfo({ hasStoredSession: false, sessionAge: null });
-        }
+    const checkSession = () => {
+        const found = Object.keys(localStorage).some(
+            (key) => key.includes("lazor") || key.includes("wallet")
+        );
+        setHasSession(found);
     };
 
-    // ============================================
-    // STEP 3: Handle Manual Reconnect
-    // ============================================
-    /**
-     * Attempts to reconnect using stored session
-     *
-     * HOW IT WORKS:
-     * 1. LazorKit checks for valid stored credentials
-     * 2. If found, prompts for biometric verification
-     * 3. On success, restores the wallet connection
-     *
-     * NOTE: This is automatic if you have auto-connect enabled,
-     * but we show it manually here for educational purposes.
-     */
     const handleReconnect = async () => {
         try {
             await connect();
-            // Update session timestamp
-            localStorage.setItem("lazorkit-session-time", Date.now().toString());
-            checkStoredSession();
+            checkSession();
         } catch (error) {
             console.error("Reconnection failed:", error);
         }
     };
 
-    // ============================================
-    // STEP 4: Handle Clear Session
-    // ============================================
-    /**
-     * Clears all stored session data
-     *
-     * USE CASE:
-     * - User wants to switch wallets
-     * - Security: clearing session on shared device
-     * - Debugging: start fresh
-     */
     const handleClearSession = async () => {
         try {
-            // Disconnect the wallet
             await disconnect();
-
-            // Clear any stored session data
-            // Note: LazorKit may use different keys - adjust as needed
-            localStorage.removeItem("lazorkit-session");
-            localStorage.removeItem("lazorkit-wallet");
-            localStorage.removeItem("lazorkit-session-time");
-
-            checkStoredSession();
+            Object.keys(localStorage).forEach((key) => {
+                if (key.includes("lazor") || key.includes("wallet")) {
+                    localStorage.removeItem(key);
+                }
+            });
+            checkSession();
         } catch (error) {
             console.error("Failed to clear session:", error);
         }
     };
 
-    // ============================================
-    // STEP 5: Render UI
-    // ============================================
     return (
-        <div className="p-6 border rounded-lg bg-white shadow-sm">
-            <h2 className="text-xl font-bold mb-4">🔄 Session Persistence</h2>
+        <div className="flex flex-col p-5 bg-neutral-900 border border-neutral-800 rounded-2xl">
+            {/* Header */}
+            <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                    <span className="text-blue-400 text-sm">🔄</span>
+                </div>
+                <h3 className="font-semibold text-white">Session</h3>
+            </div>
 
-            {/* Current Status */}
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Session Status</h3>
-                <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Connected:</span>
-                        <span className={isConnected ? "text-green-600" : "text-red-600"}>
-                            {isConnected ? "Yes ✅" : "No ❌"}
-                        </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Stored Session:</span>
-                        <span className={sessionInfo.hasStoredSession ? "text-green-600" : "text-gray-400"}>
-                            {sessionInfo.hasStoredSession ? "Found ✅" : "None"}
-                        </span>
-                    </div>
-                    {sessionInfo.sessionAge && (
-                        <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Last Used:</span>
-                            <span className="text-gray-600">{sessionInfo.sessionAge}</span>
-                        </div>
-                    )}
+            {/* Status */}
+            <div className="mb-4 p-3 bg-neutral-800/50 border border-neutral-700/50 rounded-xl">
+                <div className="flex justify-between items-center text-sm mb-2">
+                    <span className="text-neutral-500">Connected</span>
+                    <span className={isConnected ? "text-emerald-400" : "text-neutral-500"}>
+                        {isConnected ? "Yes" : "No"}
+                    </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                    <span className="text-neutral-500">Session Stored</span>
+                    <span className={hasSession ? "text-emerald-400" : "text-neutral-500"}>
+                        {hasSession ? "Yes" : "No"}
+                    </span>
                 </div>
             </div>
 
-            {/* Connected Wallet Info */}
+            {/* Wallet info */}
             {isConnected && wallet && (
-                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded">
-                    <p className="text-sm text-green-800 font-medium">Wallet Connected</p>
-                    <p className="text-xs text-green-600 mt-1 font-mono break-all">
-                        {wallet.smartWallet}
-                    </p>
+                <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                    <p className="text-xs font-medium text-emerald-400 mb-1">Wallet</p>
+                    <code className="text-xs text-emerald-300/70 break-all font-mono">
+                        {wallet.smartWallet.slice(0, 20)}...
+                    </code>
                 </div>
             )}
 
             {/* Actions */}
-            <div className="space-y-3">
+            <div className="flex-1 space-y-2">
                 {!isConnected && (
                     <button
                         onClick={handleReconnect}
                         disabled={isConnecting}
-                        className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg font-medium transition-colors"
+                        className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 rounded-xl text-sm font-medium text-white transition-colors"
                     >
-                        {isConnecting ? "Connecting..." : "Connect / Restore Session"}
+                        {isConnecting ? "Connecting..." : "Restore Session"}
                     </button>
                 )}
 
                 <button
                     onClick={handleClearSession}
-                    className="w-full py-2 px-4 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-medium transition-colors"
+                    className="w-full py-2.5 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-xl text-sm font-medium text-neutral-400 transition-colors"
                 >
-                    Clear Session & Disconnect
-                </button>
-
-                <button
-                    onClick={checkStoredSession}
-                    className="w-full py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
-                >
-                    Check Session Status
+                    Clear Session
                 </button>
             </div>
 
-            {/* Developer Info */}
-            <div className="mt-6 pt-4 border-t">
-                <p className="text-xs text-gray-400">
-                    💡 Sessions are stored locally. Close this tab, reopen it, and your
-                    wallet will still be connected!
-                </p>
-            </div>
+            {/* Footer tip */}
+            <p className="mt-4 pt-4 border-t border-neutral-800 text-xs text-neutral-600">
+                Sessions persist across browser restarts.
+            </p>
         </div>
     );
 }
