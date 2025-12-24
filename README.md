@@ -2,7 +2,7 @@
 
 > **Production-ready starter template** for building Solana apps with **passkey authentication** and **gasless transactions** using [LazorKit](https://lazorkit.com).
 
-[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://lazorpay.vercel.app)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://lazpas-superteam.vercel.app)
 [![Solana Devnet](https://img.shields.io/badge/network-devnet-blue)](https://solana.com)
 [![Built with LazorKit](https://img.shields.io/badge/built%20with-LazorKit-purple)](https://lazorkit.com)
 
