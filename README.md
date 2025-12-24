@@ -1,101 +1,115 @@
 # LazorPay 🔐
 
-> A developer-friendly starter template for building Solana apps with **passkey authentication** and **gasless transactions** using [LazorKit](https://lazorkit.com).
+> **Production-ready starter template** for building Solana apps with **passkey authentication** and **gasless transactions** using [LazorKit](https://lazorkit.com).
 
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://lazorpay.vercel.app)
+[![Solana Devnet](https://img.shields.io/badge/network-devnet-blue)](https://solana.com)
+[![Built with LazorKit](https://img.shields.io/badge/built%20with-LazorKit-purple)](https://lazorkit.com)
 
-## ✨ What You'll Learn
+---
 
-| Feature | Description |
-|---------|-------------|
-| **Passkey Authentication** | Create wallets with FaceID/TouchID - no seed phrases! |
-| **Gasless Transactions** | Send SOL/tokens without holding SOL for gas fees |
-| **Session Persistence** | Stay logged in across browser sessions |
+## 🎯 What This Template Demonstrates
 
-## 🚀 Quick Start
+| Feature | Description | Tutorial |
+|---------|-------------|----------|
+| **Passkey Authentication** | Create wallets with FaceID/TouchID — no seed phrases! | [Tutorial 1](docs/TUTORIAL-1-PASSKEY.md) |
+| **Gasless Transactions** | Send SOL/tokens without holding SOL for gas fees | [Tutorial 2](docs/TUTORIAL-2-GASLESS.md) |
+| **Session Persistence** | Stay logged in across browser sessions securely | [Tutorial 3](docs/TUTORIAL-3-SESSION.md) |
+
+---
+
+## 🚀 Quick Start (Under 2 Minutes)
+
+### Prerequisites
+- Node.js 18+
+- npm or pnpm
+
+### Installation
 
 ```bash
-# Clone the repo
+# 1. Clone the repo
 git clone https://github.com/BishalJena/lazorpay.git
 cd lazorpay
 
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Set up environment (optional - defaults work for devnet)
+# 3. Set up environment (optional - defaults work for Devnet)
 cp .env.example .env.local
 
-# Run the app
+# 4. Run the app
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) - you should see the demo in under 2 minutes!
+Open [http://localhost:3000](http://localhost:3000) — you're live on Solana Devnet!
+
+---
+
+## 📦 Tech Stack
+
+| Technology | Purpose |
+|------------|---------|
+| **Next.js 14** | React framework with App Router |
+| **LazorKit SDK** | Passkey wallet + Paymaster |
+| **Tailwind CSS v4** | Styling with CSS-first config |
+| **TypeScript** | Type safety |
+| **Solana Web3.js** | Blockchain interaction |
+
+---
 
 ## 📁 Project Structure
 
 ```
 src/
 ├── app/
-│   ├── layout.tsx        # Root layout with LazorKit provider
-│   └── page.tsx          # Demo page combining all examples
-├── examples/             # ⭐ THE MAIN LEARNING RESOURCES
-│   ├── passkey-auth.tsx  # Example 1: Wallet creation & login
-│   ├── gasless-send.tsx  # Example 2: Send SOL without gas
-│   └── session-persist.tsx # Example 3: Stay logged in
-└── lib/
-    └── providers.tsx     # LazorKit SDK configuration
+│   ├── layout.tsx          # Root layout with fonts & providers
+│   ├── page.tsx            # Landing page with all 3 demos
+│   └── globals.css         # Tailwind v4 + custom styles
+│
+├── components/ui/          # Reusable UI components
+│   ├── Button.tsx          # Primary/Secondary/Ghost variants
+│   ├── Card.tsx            # Elevated card with shadow
+│   └── Input.tsx           # Styled form input
+│
+├── examples/               # ⭐ THE MAIN LEARNING RESOURCES
+│   ├── passkey-auth.tsx    # Example 1: Biometric wallet creation
+│   ├── gasless-send.tsx    # Example 2: Send SOL without gas
+│   └── session-persist.tsx # Example 3: Local session storage
+│
+├── lib/
+│   └── providers.tsx       # LazorKit SDK configuration
+│
+└── docs/                   # Step-by-step tutorials
+    ├── TUTORIAL-1-PASSKEY.md
+    ├── TUTORIAL-2-GASLESS.md
+    └── TUTORIAL-3-SESSION.md
 ```
+
+---
 
 ## 📖 Step-by-Step Tutorials
 
-### Tutorial 1: Passkey Authentication
-→ [docs/TUTORIAL-1-PASSKEY.md](docs/TUTORIAL-1-PASSKEY.md)
-
+### [Tutorial 1: Passkey Authentication](docs/TUTORIAL-1-PASSKEY.md)
 Learn how to:
 - Set up `LazorkitProvider`
 - Use the `useWallet` hook
 - Create wallets with biometrics
 - Handle connection states
 
-### Tutorial 2: Gasless Transactions
-→ [docs/TUTORIAL-2-GASLESS.md](docs/TUTORIAL-2-GASLESS.md)
-
+### [Tutorial 2: Gasless Transactions](docs/TUTORIAL-2-GASLESS.md)
 Learn how to:
 - Send SOL without paying gas
 - Configure the Paymaster
 - Sign transactions with passkey
 - Handle transaction states
 
-### Tutorial 3: Session Persistence
-→ [docs/TUTORIAL-3-SESSION.md](docs/TUTORIAL-3-SESSION.md)
-
+### [Tutorial 3: Session Persistence](docs/TUTORIAL-3-SESSION.md)
 Learn how to:
 - Persist sessions across refreshes
 - Auto-reconnect returning users
-- Manage session lifecycle
+- Manage session lifecycle securely
 
-## 🔧 Configuration
-
-### Environment Variables
-
-Create `.env.local` from the template:
-
-```bash
-cp .env.example .env.local
-```
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_RPC_URL` | Solana RPC endpoint | `https://api.devnet.solana.com` |
-| `NEXT_PUBLIC_PORTAL_URL` | LazorKit passkey portal | `https://portal.lazor.sh` |
-| `NEXT_PUBLIC_PAYMASTER_URL` | Gas sponsorship service | `https://kora.devnet.lazorkit.com` |
-
-### Switching to Mainnet
-
-```bash
-# In .env.local
-NEXT_PUBLIC_RPC_URL=https://api.mainnet-beta.solana.com
-NEXT_PUBLIC_PAYMASTER_URL=https://kora.mainnet.lazorkit.com
-```
+---
 
 ## 🧩 Key Code Examples
 
@@ -105,10 +119,10 @@ NEXT_PUBLIC_PAYMASTER_URL=https://kora.mainnet.lazorkit.com
 import { useWallet } from "@lazorkit/wallet";
 
 function ConnectButton() {
-  const { connect, isConnected, wallet } = useWallet();
+  const { connect, isConnected, smartWalletPubkey } = useWallet();
 
   if (isConnected) {
-    return <p>Connected: {wallet.smartWallet}</p>;
+    return <p>Connected: {smartWalletPubkey?.toBase58().slice(0, 8)}...</p>;
   }
 
   return <button onClick={connect}>Connect with Passkey</button>;
@@ -126,12 +140,12 @@ function SendButton() {
 
   const handleSend = async () => {
     const instruction = SystemProgram.transfer({
-      fromPubkey: smartWalletPubkey,
+      fromPubkey: smartWalletPubkey!,
       toPubkey: new PublicKey("RECIPIENT_ADDRESS"),
       lamports: 0.01 * LAMPORTS_PER_SOL,
     });
 
-    // Gas is sponsored by Paymaster - user pays nothing!
+    // Gas is sponsored by Paymaster — user pays $0!
     const signature = await signAndSendTransaction({
       instructions: [instruction],
     });
@@ -143,25 +157,69 @@ function SendButton() {
 }
 ```
 
+---
+
+## � Configuration
+
+### Environment Variables
+
+Create `.env.local` from the template:
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable | Description | Default |
+|----------|-------------|---------||`NEXT_PUBLIC_RPC_URL` | Solana RPC endpoint | `https://api.devnet.solana.com` |
+| `NEXT_PUBLIC_PORTAL_URL` | LazorKit passkey portal | `https://portal.lazor.sh` |
+| `NEXT_PUBLIC_PAYMASTER_URL` | Gas sponsorship service | `https://kora.devnet.lazorkit.com` |
+
+### Switching to Mainnet
+
+```bash
+# In .env.local
+NEXT_PUBLIC_RPC_URL=https://api.mainnet-beta.solana.com
+NEXT_PUBLIC_PAYMASTER_URL=https://kora.mainnet.lazorkit.com
+```
+
+---
+
 ## 🐛 Troubleshooting
 
-### "Buffer is not defined"
-Add the polyfill in your layout or provider:
+<details>
+<summary><strong>"Buffer is not defined"</strong></summary>
+
+Add the polyfill in `src/lib/providers.tsx`:
 ```tsx
 if (typeof window !== "undefined") {
   window.Buffer = window.Buffer || require("buffer").Buffer;
 }
 ```
+</details>
 
-### Passkey not working
+<details>
+<summary><strong>Passkey not working</strong></summary>
+
 - Ensure you're on HTTPS or localhost
-- Check browser supports WebAuthn (Chrome, Safari, Firefox, Edge)
+- Check browser supports WebAuthn (Chrome 67+, Safari 14+, Firefox 60+)
 - Clear site data and try again
+</details>
 
-### Transaction failing
+<details>
+<summary><strong>Transaction failing</strong></summary>
+
 - Verify you're on Devnet (check RPC URL)
 - Ensure the Paymaster URL is correct
 - Check console for detailed error messages
+</details>
+
+---
+
+## 🎥 Video Walkthrough
+
+Coming soon — a 2-minute demo showing the complete passkey wallet flow.
+
+---
 
 ## 🔗 Resources
 
@@ -170,10 +228,19 @@ if (typeof window !== "undefined") {
 - [Telegram Community](https://t.me/lazorkit)
 - [Solana Web3.js Docs](https://solana-labs.github.io/solana-web3.js/)
 
+---
+
 ## 📄 License
 
 MIT © 2025
 
 ---
 
-Built for [Superteam Vietnam Hackathon](https://superteam.fun) 🇻🇳
+## 👤 Author
+
+**Bishal Jena**
+- GitHub: [@BishalJena](https://github.com/BishalJena)
+
+---
+
+Built for [Superteam Vietnam Hackathon](https://superteam.fun) 🇻🇳 | Powered by [LazorKit](https://lazorkit.com)
