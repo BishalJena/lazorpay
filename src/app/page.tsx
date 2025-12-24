@@ -4,6 +4,7 @@ import { useWallet } from "@lazorkit/wallet";
 import { PasskeyAuthExample } from "@/examples/passkey-auth";
 import { GaslessSendExample } from "@/examples/gasless-send";
 import { SessionPersistExample } from "@/examples/session-persist";
+import { UsdcTransferExample } from "@/examples/usdc-transfer";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
@@ -26,8 +27,15 @@ const Icons = {
       <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
       <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
     </svg>
+  ),
+  DollarSign: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23" />
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    </svg>
   )
 };
+
 
 export default function Home() {
   const { isConnected, smartWalletPubkey } = useWallet();
@@ -86,45 +94,59 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Demo Grid */}
-        <section id="demo" className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Demo Grid - 4 Columns */}
+        <section id="demo" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-          {/* Feature 1 */}
-          <Card className="p-8 flex flex-col h-full">
-            <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6">
+          {/* Feature 1: Biometric Auth */}
+          <Card className="p-5 flex flex-col min-h-[320px]">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 mb-4 shrink-0">
               <Icons.Fingerprint />
             </div>
-            <h3 className="text-xl font-bold mb-3">Biometric Auth</h3>
-            <p className="text-gray-500 leading-relaxed mb-8 flex-grow">
-              Replace seed phrases with FaceID and TouchID using standard WebAuthn passkeys.
+            <h3 className="text-base font-bold mb-2">Biometric Auth</h3>
+            <p className="text-gray-500 text-sm leading-relaxed mb-4 flex-grow">
+              Replace seed phrases with FaceID/TouchID.
             </p>
             <div className="mt-auto">
               <PasskeyAuthExample />
             </div>
           </Card>
 
-          {/* Feature 2 */}
-          <Card className="p-8 flex flex-col h-full">
-            <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 mb-6">
+          {/* Feature 2: Gasless SOL */}
+          <Card className="p-5 flex flex-col min-h-[320px]">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 mb-4 shrink-0">
               <Icons.Zap />
             </div>
-            <h3 className="text-xl font-bold mb-3">Gasless Transactions</h3>
-            <p className="text-gray-500 leading-relaxed mb-8 flex-grow">
-              Sponsor transaction fees for your users using a Paymaster. Onboard users with $0 SOL.
+            <h3 className="text-base font-bold mb-2">Gasless SOL</h3>
+            <p className="text-gray-500 text-sm leading-relaxed mb-4 flex-grow">
+              Sponsor fees with Paymaster. $0 SOL to start.
             </p>
             <div className="mt-auto">
               <GaslessSendExample />
             </div>
           </Card>
 
-          {/* Feature 3 */}
-          <Card className="p-8 flex flex-col h-full">
-            <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 mb-6">
+          {/* Feature 3: USDC Transfer */}
+          <Card className="p-5 flex flex-col min-h-[320px]">
+            <div className="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center text-cyan-600 mb-4 shrink-0">
+              <Icons.DollarSign />
+            </div>
+            <h3 className="text-base font-bold mb-2">USDC Transfer</h3>
+            <p className="text-gray-500 text-sm leading-relaxed mb-4 flex-grow">
+              Send SPL tokens gaslessly. Real payments.
+            </p>
+            <div className="mt-auto">
+              <UsdcTransferExample />
+            </div>
+          </Card>
+
+          {/* Feature 4: Session */}
+          <Card className="p-5 flex flex-col min-h-[320px]">
+            <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600 mb-4 shrink-0">
               <Icons.Database />
             </div>
-            <h3 className="text-xl font-bold mb-3">Session Persistence</h3>
-            <p className="text-gray-500 leading-relaxed mb-8 flex-grow">
-              Securely store session keys in local storage to keep users logged in across refreshes.
+            <h3 className="text-base font-bold mb-2">Session</h3>
+            <p className="text-gray-500 text-sm leading-relaxed mb-4 flex-grow">
+              Stay logged in across refreshes.
             </p>
             <div className="mt-auto">
               <SessionPersistExample />

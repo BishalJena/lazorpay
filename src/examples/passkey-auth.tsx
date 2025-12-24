@@ -5,60 +5,47 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 
 /**
- * Example: Passkey Authentication
- * 
- * This component demonstrates how to create and connect a smart wallet
- * using biometrics (FaceID/TouchID). It uses the `useWallet` hook from
- * `@lazorkit/wallet` which handles the entire WebAuthn handshake.
- * 
- * Key Concepts:
- * - `connect()`: Triggers the browser's native passkey prompt.
- * - `disconnect()`: Clears the current session.
- * - `isConnecting`: Loading state while passkey prompt is active.
- * - `isConnected`: True after successful authentication.
+ * Biometric Auth Example - Standardized layout
  */
 export function PasskeyAuthExample() {
-    // Step 1: Get wallet controls from the LazorKit SDK
-    const { connect, disconnect, isConnected, isConnecting } = useWallet();
+    const { connect, disconnect, isConnected, isConnecting, smartWalletPubkey } = useWallet();
     const [error, setError] = useState<string | null>(null);
 
     const handleConnect = async () => {
         try {
             setError(null);
-            // Step 2: This triggers the browser's native passkey prompt
-            // If user doesn't have a passkey, it will prompt to create one.
             await connect();
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Connection failed");
+            setError(err instanceof Error ? err.message : "Failed");
         }
     };
 
     return (
-        <div className="w-full space-y-4">
-            {error && (
-                <div className="p-3 bg-red-50 text-red-600 text-sm rounded-xl border border-red-100">
-                    {error}
-                </div>
-            )}
+        <div className="w-full space-y-2">
+            {/* Row 1: Status/Input area - fixed height */}
+            <div className="h-10 rounded-lg border border-gray-200 bg-gray-50 flex items-center px-3">
+                {isConnected && smartWalletPubkey ? (
+                    <span className="font-mono text-xs text-gray-600 truncate">
+                        {smartWalletPubkey.toBase58().slice(0, 8)}...{smartWalletPubkey.toBase58().slice(-4)}
+                    </span>
+                ) : error ? (
+                    <span className="text-xs text-red-500 truncate">{error}</span>
+                ) : (
+                    <span className="text-xs text-gray-400">No wallet connected</span>
+                )}
+            </div>
 
-            {isConnected ? (
-                <Button
-                    variant="danger"
-                    fullWidth
-                    onClick={() => disconnect()}
-                >
-                    Disconnect Wallet
-                </Button>
-            ) : (
-                <Button
-                    variant="primary"
-                    fullWidth
-                    loading={isConnecting}
-                    onClick={handleConnect}
-                >
-                    Create Passkey Wallet
-                </Button>
-            )}
+            {/* Row 2: Action button - fixed height */}
+            <Button
+                onClick={isConnected ? () => disconnect() : handleConnect}
+                loading={isConnecting}
+                fullWidth
+                size="sm"
+                variant={isConnected ? "ghost" : "primary"}
+                className={isConnected ? "!text-red-500 hover:!bg-red-50" : ""}
+            >
+                {isConnecting ? "Connecting..." : isConnected ? "Disconnect" : "Create Wallet"}
+            </Button>
         </div>
     );
 }

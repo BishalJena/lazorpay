@@ -13,7 +13,8 @@
 | Feature | Description | Tutorial |
 |---------|-------------|----------|
 | **Passkey Authentication** | Create wallets with FaceID/TouchID — no seed phrases! | [Tutorial 1](docs/TUTORIAL-1-PASSKEY.md) |
-| **Gasless Transactions** | Send SOL/tokens without holding SOL for gas fees | [Tutorial 2](docs/TUTORIAL-2-GASLESS.md) |
+| **Gasless SOL Transfer** | Send SOL without holding SOL for gas fees | [Tutorial 2](docs/TUTORIAL-2-GASLESS.md) |
+| **USDC Transfer** | Send SPL tokens like USDC with gasless transactions | [Tutorial 4](docs/TUTORIAL-4-USDC.md) |
 | **Session Persistence** | Stay logged in across browser sessions securely | [Tutorial 3](docs/TUTORIAL-3-SESSION.md) |
 
 ---

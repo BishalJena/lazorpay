@@ -4,21 +4,11 @@ import { useWallet } from "@lazorkit/wallet";
 import { SystemProgram, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 
 /**
- * Example: Gasless Transactions (Paymaster)
- * 
- * This component sends a Solana transaction where the gas fees are paid
- * by LazorKit's Paymaster service, not the user. Zero SOL required!
- * 
- * Key Concepts:
- * - `smartWalletPubkey`: The on-chain address of the user's smart wallet.
- * - `signAndSendTransaction`: Handles Paymaster signing + user passkey signing.
- * - The Paymaster URL is configured in the LazorkitProvider.
+ * Gasless SOL Transfer Example - Standardized layout
  */
 export function GaslessSendExample() {
-    // smartWalletPubkey = user's actual on-chain address
     const { signAndSendTransaction, smartWalletPubkey, isConnected } = useWallet();
     const [amount, setAmount] = useState("0.001");
     const [status, setStatus] = useState<"idle" | "sending" | "success">("idle");
@@ -27,25 +17,15 @@ export function GaslessSendExample() {
         if (!smartWalletPubkey) return;
         try {
             setStatus("sending");
-
-            // Step A: Create a standard Solana transfer instruction
-            // Note: Use `smartWalletPubkey` as sender (NOT the passkey signer address)
             const demoKey = new PublicKey("GgM5j8jG5z3b2v5z5z5z5z5z5z5z5z5z5z5z5z5z5z5");
             const instruction = SystemProgram.transfer({
                 fromPubkey: smartWalletPubkey,
                 toPubkey: demoKey,
                 lamports: parseFloat(amount) * LAMPORTS_PER_SOL,
             });
-
-            // Step B: Send via LazorKit SDK
-            // Under the hood this: 
-            // 1. Requests partial signature from Paymaster (gas sponsor)
-            // 2. Prompts user for passkey signature
-            // 3. Submits the final transaction to Solana
             await signAndSendTransaction({ instructions: [instruction] });
-
             setStatus("success");
-            setTimeout(() => setStatus("idle"), 3000);
+            setTimeout(() => setStatus("idle"), 2000);
         } catch (err) {
             console.error(err);
             setStatus("idle");
@@ -53,32 +33,33 @@ export function GaslessSendExample() {
     };
 
     return (
-        <div className="w-full">
-            {!isConnected ? (
-                <div className="h-12 flex items-center justify-center border border-dashed border-gray-300 rounded-xl text-gray-400 text-sm bg-gray-50">
-                    Wallet Required
+        <div className="w-full space-y-2">
+            {/* Row 1: Input area - fixed height */}
+            <div className="h-10 flex gap-2">
+                <input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    disabled={!isConnected}
+                    className="w-20 h-full px-3 text-sm text-center rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
+                />
+                <div className="flex-1 h-full rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
+                    <span className="text-xs text-gray-400">SOL (0 gas)</span>
                 </div>
-            ) : (
-                <div className="flex gap-4">
-                    <div className="w-24">
-                        <Input
-                            type="number"
-                            value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
-                            className="text-center font-mono"
-                        />
-                    </div>
-                    <Button
-                        onClick={handleSend}
-                        loading={status === "sending"}
-                        fullWidth
-                        variant={status === "success" ? "secondary" : "secondary"}
-                        className={status === "success" ? "!bg-green-50 !text-green-600 !border-green-200" : "!bg-gray-900 !text-white hover:!bg-black"}
-                    >
-                        {status === "success" ? "✓ Sent!" : "Send (0 Gas)"}
-                    </Button>
-                </div>
-            )}
+            </div>
+
+            {/* Row 2: Action button - fixed height */}
+            <Button
+                onClick={handleSend}
+                loading={status === "sending"}
+                disabled={!isConnected}
+                fullWidth
+                size="sm"
+                variant="primary"
+                className={status === "success" ? "!bg-green-500" : "!bg-gray-900 hover:!bg-black"}
+            >
+                {!isConnected ? "Connect First" : status === "success" ? "✓ Sent!" : status === "sending" ? "Sending..." : "Send SOL"}
+            </Button>
         </div>
     );
 }
