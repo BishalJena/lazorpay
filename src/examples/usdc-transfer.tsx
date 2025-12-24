@@ -3,14 +3,15 @@
 import { useWallet } from "@lazorkit/wallet";
 import {
     createTransferInstruction,
-    getAssociatedTokenAddressSync
+    getAssociatedTokenAddressSync,
+    createAssociatedTokenAccountIdempotentInstruction
 } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 
 /**
- * USDC Transfer Example - Standardized layout
+ * USDC Transfer Example - With ATA creation for recipient
  */
 const USDC_MINT_DEVNET = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
 
@@ -19,25 +20,42 @@ export function UsdcTransferExample() {
     const [recipient, setRecipient] = useState("");
     const [amount, setAmount] = useState("1");
     const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const handleTransfer = async () => {
         if (!smartWalletPubkey || !recipient) return;
         try {
             setStatus("sending");
+            setErrorMsg(null);
+
             const recipientPubkey = new PublicKey(recipient);
             const senderATA = getAssociatedTokenAddressSync(USDC_MINT_DEVNET, smartWalletPubkey, true);
-            const recipientATA = getAssociatedTokenAddressSync(USDC_MINT_DEVNET, recipientPubkey);
-            const instruction = createTransferInstruction(
+            const recipientATA = getAssociatedTokenAddressSync(USDC_MINT_DEVNET, recipientPubkey, true);
+
+            // Create recipient ATA if it doesn't exist (idempotent - won't fail if exists)
+            const createAtaIx = createAssociatedTokenAccountIdempotentInstruction(
+                smartWalletPubkey,  // payer
+                recipientATA,       // ata
+                recipientPubkey,    // owner
+                USDC_MINT_DEVNET    // mint
+            );
+
+            const transferIx = createTransferInstruction(
                 senderATA, recipientATA, smartWalletPubkey,
                 parseFloat(amount) * 1_000_000
             );
-            await signAndSendTransaction({ instructions: [instruction] });
+
+            await signAndSendTransaction({ instructions: [createAtaIx, transferIx] });
             setStatus("success");
             setTimeout(() => setStatus("idle"), 2000);
         } catch (err) {
             console.error(err);
             setStatus("error");
-            setTimeout(() => setStatus("idle"), 2000);
+            setErrorMsg(err instanceof Error ? err.message.slice(0, 40) : "Transfer failed");
+            setTimeout(() => {
+                setStatus("idle");
+                setErrorMsg(null);
+            }, 3000);
         }
     };
 
