@@ -25,4 +25,9 @@ Thumbs.db
 # Internal docs (not for submission)
 hackathon.md
 PRD.md
+demo.md
 .vercel
+
+# Local dev certificates (devs should generate their own)
+certs/
+
