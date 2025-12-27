@@ -101,7 +101,9 @@ src/
 └── docs/                   # Step-by-step tutorials
     ├── TUTORIAL-1-PASSKEY.md
     ├── TUTORIAL-2-GASLESS.md
-    └── TUTORIAL-3-SESSION.md
+    ├── TUTORIAL-3-SESSION.md
+    ├── TUTORIAL-4-USDC.md
+    └── TROUBLESHOOTING.md  # Common issues & solutions
 ```
 
 ---

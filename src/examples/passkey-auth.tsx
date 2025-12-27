@@ -1,26 +1,66 @@
 "use client";
 
+/**
+ * =============================================================================
+ * PASSKEY AUTHENTICATION EXAMPLE
+ * =============================================================================
+ * 
+ * This component demonstrates how to:
+ * 1. Connect a wallet using biometric authentication (FaceID/TouchID)
+ * 2. Display the wallet address with copy functionality
+ * 3. Disconnect the wallet
+ * 
+ * Key LazorKit SDK methods used:
+ * - connect() - Opens the passkey portal for authentication
+ * - disconnect() - Clears the wallet session
+ * - isConnected - Boolean indicating connection status
+ * - smartWalletPubkey - The user's Solana wallet address (PublicKey)
+ * 
+ * @see https://docs.lazorkit.com/react-sdk/use-wallet
+ */
+
 import { useWallet } from "@lazorkit/wallet";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 
-/**
- * Biometric Auth Example - With copy address functionality
- */
 export function PasskeyAuthExample() {
+    // =========================================================================
+    // STEP 1: Get wallet state and methods from useWallet hook
+    // =========================================================================
+    // The useWallet hook provides everything needed to manage wallet state:
+    // - connect: Function to initiate passkey authentication
+    // - disconnect: Function to clear the session
+    // - isConnected: Whether a wallet is currently connected
+    // - isConnecting: Loading state during authentication
+    // - smartWalletPubkey: The user's wallet address (Solana PublicKey)
     const { connect, disconnect, isConnected, isConnecting, smartWalletPubkey } = useWallet();
+
     const [error, setError] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
 
+    // =========================================================================
+    // STEP 2: Handle wallet connection
+    // =========================================================================
+    // When the user clicks "Create Wallet", we call connect().
+    // This opens an iframe to the LazorKit portal where the user
+    // authenticates using their device's biometric (FaceID/TouchID/Windows Hello).
+    // The passkey is stored in the device's secure enclave - no seed phrase needed!
     const handleConnect = async () => {
         try {
             setError(null);
+            // This triggers the passkey authentication flow
             await connect();
+            // After successful connection, smartWalletPubkey will be available
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed");
         }
     };
 
+    // =========================================================================
+    // STEP 3: Copy wallet address to clipboard
+    // =========================================================================
+    // The smartWalletPubkey is a Solana PublicKey object.
+    // Use .toBase58() to get the string representation (e.g., "xtixa9bb...")
     const handleCopy = () => {
         if (smartWalletPubkey) {
             navigator.clipboard.writeText(smartWalletPubkey.toBase58());
@@ -31,11 +71,11 @@ export function PasskeyAuthExample() {
 
     return (
         <div className="w-full space-y-2">
-            {/* Row 1: Wallet Address with Copy Button */}
+            {/* Wallet Address Display - Click to copy */}
             <div
                 className={`h-10 rounded-lg border flex items-center px-3 cursor-pointer transition-colors ${copied
-                        ? "bg-green-50 border-green-300"
-                        : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+                    ? "bg-green-50 border-green-300"
+                    : "bg-gray-50 border-gray-200 hover:bg-gray-100"
                     }`}
                 onClick={isConnected ? handleCopy : undefined}
                 title={isConnected ? "Click to copy full address" : ""}
@@ -58,7 +98,7 @@ export function PasskeyAuthExample() {
                 )}
             </div>
 
-            {/* Row 2: Action button */}
+            {/* Connect/Disconnect Button */}
             <Button
                 onClick={isConnected ? () => disconnect() : handleConnect}
                 loading={isConnecting}
@@ -72,4 +112,3 @@ export function PasskeyAuthExample() {
         </div>
     );
 }
-
